@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MovieTracker</string>
+    <string name="text_menu">Wybierz:</string>
+    <string name="main_favorites">Ulubione</string>
+    <string name="show_movies">Pokaż filmy</string>
+    <string name="favorites">Ulubione</string>
+    <string name="chooseDate">Wybierz dzień</string>
+    <string name="movies">Filmy</string>
+</resources>
