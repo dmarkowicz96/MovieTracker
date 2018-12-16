@@ -8,10 +8,8 @@
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/movieTextItem"
-        android:layout_width="301dp"
+        android:layout_width="515dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
         android:gravity="center_vertical"
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
         android:textAppearance="?android:attr/textAppearanceListItemSmall" />

@@ -12,20 +12,29 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import pk.movietracker.R;
+import pk.movietracker.db.dao.MovieDAO;
 import pk.movietracker.model.Movie;
 
 public class MovieAdapter extends ArrayAdapter<Movie> {
     private ArrayList<Movie> movieList;
     private Context mContext;
+    private MovieDAO movieDAO;
 
     public MovieAdapter(@NonNull Context context, ArrayList<Movie> list) {
         super(context, 0, list);
         mContext = context;
         movieList = list;
+        movieDAO = new MovieDAO();
+    }
+
+    public void refresh(ArrayList<Movie> arrayList) {
+        arrayList.clear();
+        arrayList.addAll(arrayList);
+        notifyDataSetChanged();
     }
 
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, final View convertView, ViewGroup parent) {
         View listItem = convertView;
 
         if(listItem == null) {
@@ -44,11 +53,12 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
         });
 
 
-        ImageView imageButton = listItem.findViewById(R.id.movieFavButton);
+        final ImageView imageButton = listItem.findViewById(R.id.movieFavButton);
+        updateFavoriteImage(imageButton,position);
         imageButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                changeFavoriteState(position);
+                changeFavoriteState(imageButton, position);
             }
         });
 
@@ -56,8 +66,27 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
         return listItem;
     }
 
-    private void changeFavoriteState(int position) {
+    private void changeFavoriteState(ImageView imageView, int position) {
+        Movie movie = movieList.get(position);
+        if(movie.isFavorite()) {
+            movieList.get(position).setFavorite(false);
+        } else {
+            movieList.get(position).setFavorite(true);
+        }
 
+        updateFavoriteImage(imageView,position);
+        movieDAO.updateState(movie);
     }
+
+    private void updateFavoriteImage(ImageView imageView, int position) {
+        Movie movie = movieList.get(position);
+        if(movie.isFavorite()) {
+            imageView.setImageResource(android.R.drawable.btn_star_big_on);
+        } else {
+            imageView.setImageResource(android.R.drawable.btn_star_big_off);
+        }
+    }
+
+
 
 }

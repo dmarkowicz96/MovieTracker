@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="pk.movietracker">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -19,8 +23,17 @@
         <activity android:name=".activity.Favorites" />
         <activity android:name=".activity.Movie" />
         <activity android:name=".activity.Calendar" />
-        <activity android:name=".activity.Movies"></activity>
+        <activity android:name=".activity.Movies" />
+
+        <service
+            android:name=".Service.TimerService"
+            android:enabled="true"
+            android:exported="true"></service>
+        <receiver android:name="Receiver.WifiReceiver" >
+            <intent-filter android:priority="100">
+                <action android:name="android.net.wifi.STATE_CHANGE" />
+            </intent-filter>
+        </receiver>
     </application>
 
-    <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>

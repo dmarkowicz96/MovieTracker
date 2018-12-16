@@ -1,32 +1,45 @@
 package pk.movietracker.activity;
 
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import pk.movietracker.R;
 import pk.movietracker.adapter.MovieAdapter;
+import pk.movietracker.db.dao.MovieDAO;
 import pk.movietracker.model.Movie;
 
 public class Movies extends AppCompatActivity {
 
-    ArrayAdapter<Movie> arrayAdapter;
+    MovieAdapter arrayAdapter;
+    private Date receivedDate;
+    MovieDAO movieDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies);
 
+        movieDAO = new MovieDAO();
+
         initializeMovieListView();
+        initializeMovieRefreshView();
     }
 
     private void initializeMovieListView() {
+        receivedDate = getReceivedDate();
 
-        ArrayList<Movie> movieList = testList();
+        ArrayList<Movie> movieList =  movieDAO.getMovies(receivedDate);
 
         final ListView listView = findViewById(R.id.movieListView);
         arrayAdapter = new MovieAdapter(this, movieList);
@@ -34,53 +47,42 @@ public class Movies extends AppCompatActivity {
         listView.setAdapter(arrayAdapter);
     }
 
+    private void initializeMovieRefreshView(){
+        final ImageView refreshButton = findViewById(R.id.refreshButton);
 
-    private ArrayList<pk.movietracker.model.Movie> testList() {
-        ArrayList<pk.movietracker.model.Movie> movieList = new ArrayList<>();
-        pk.movietracker.model.Movie movie = new pk.movietracker.model.Movie();
-        movie.setDate(new Date());
-        movie.setName("Film1");
-        movie.setDescription("AAAAAAAAA dDDDDDDDDDD");
-        movieList.add(movie);
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences prefs = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
+                long refreshTime = prefs.getLong("refreshTime",0);
+                long time = prefs.getLong("time",-1);
+                if(time != refreshTime) {
+                    prefs.edit().putLong("refreshTime", time).apply();
 
-        pk.movietracker.model.Movie movie2 = new pk.movietracker.model.Movie();
-        movie2.setDate(new Date());
-        movie2.setName("Film2");
-        movie2.setDescription("AAAAAAAAA dDDDDDDDDDD");
-        movieList.add(movie2);
+                    ArrayList<Movie> movieList = movieDAO.getMovies(receivedDate);
+                    arrayAdapter.refresh(movieList);
+                    Toast.makeText(getApplicationContext(),"Zakutalizowano", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(),"Dane są aktualne", Toast.LENGTH_LONG).show();
+                }
 
-        pk.movietracker.model.Movie movie3 = new pk.movietracker.model.Movie();
-        movie3.setDate(new Date());
-        movie3.setName("Film3");
-        movie3.setDescription("AAAAAAAAA dDDDDDDDDDD");
-        movieList.add(movie3);
-
-        pk.movietracker.model.Movie movie4 = new pk.movietracker.model.Movie();
-        movie4.setDate(new Date());
-        movie4.setName("Film4");
-        movie4.setDescription("AAAAAAAAA dDDDDDDDDDD");
-        movieList.add(movie4);
-
-        pk.movietracker.model.Movie movie5 = new pk.movietracker.model.Movie();
-        movie5.setDate(new Date());
-        movie5.setName("Film5");
-        movie5.setDescription("AAAAAAAAA dDDDDDDDDDD");
-        movieList.add(movie5);
-
-        pk.movietracker.model.Movie movie6 = new Movie();
-        movie6.setDate(new Date());
-        movie6.setName("Film6");
-        movie6.setDescription("AAAAAAAAA dDDDDDDDDDD");
-        movieList.add(movie6);
-        movieList.add(movie6);
-        movieList.add(movie6);
-        movieList.add(movie6);
-        movieList.add(movie6);
-        movieList.add(movie6);
-        movieList.add(movie6);
-        movieList.add(movie6);
-
-
-        return movieList;
+            }
+        });
     }
+
+    private Date getReceivedDate() {
+        Bundle bundle = getIntent().getExtras();
+
+        Date date = new Date();
+        if(bundle != null) {
+            int year = bundle.getInt("year");
+            int month = bundle.getInt("month");
+            int day = bundle.getInt("day");
+
+            date = new GregorianCalendar(year, month,day).getTime();
+        }
+
+        return date;
+    }
+
 }

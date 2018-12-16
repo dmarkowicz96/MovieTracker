@@ -6,4 +6,6 @@
     <string name="favorites">Favorites</string>
     <string name="chooseDate">Choose day</string>
     <string name="movies">Movies</string>
+    <string name="authors">Authors</string>
+
 </resources>
