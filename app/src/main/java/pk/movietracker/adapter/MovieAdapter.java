@@ -1,6 +1,8 @@
 package pk.movietracker.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,7 +50,7 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                showFilm(position);
             }
         });
 
@@ -87,6 +89,16 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
         }
     }
 
+    private void showFilm(int position) {
+        Movie movie = movieList.get(position);
+
+        Intent intent = new Intent(mContext, pk.movietracker.activity.Movie.class);
+        Bundle bundle = new Bundle();
+        bundle.putLong("movieId",movie.getId());
+
+        intent.putExtras(bundle);
+        mContext.startActivity(intent);
+    }
 
 
 }
