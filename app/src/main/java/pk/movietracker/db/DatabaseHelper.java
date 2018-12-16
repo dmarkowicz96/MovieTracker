@@ -14,7 +14,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_MOVIES = "CREATE TABLE movie(" +
             "id integer PRIMARY KEY AUTOINCREMENT not null," +
             "name varchar2(50)," +
-            "description varchar2(50)," +
+            "description varchar2(50000)," +
             "start_date date," +
             "favorite integer" +
             ");";
@@ -46,7 +46,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static DatabaseHelper getInstance(Context context) {
         if(instance == null) {
-            instance = new DatabaseHelper(context.getApplicationContext(), "MovieTracker", null, 1);;
+            instance = new DatabaseHelper(context.getApplicationContext(), "MovieTrackerDBDM", null, 1);;
         }
 
         return instance;
