@@ -21,6 +21,13 @@ public class Movie {
         this.isFavorite = favorite;
     }
 
+    public Movie(String name, String description, Date date, boolean favorite) {
+        this.name = name;
+        this.description = description;
+        this.date = date;
+        this.isFavorite = favorite;
+    }
+
     public Movie(long id, String name, String description, Date date) {
         this.id = id;
         this.name = name;

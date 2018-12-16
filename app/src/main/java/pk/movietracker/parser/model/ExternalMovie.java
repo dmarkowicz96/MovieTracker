@@ -11,10 +11,13 @@ public class ExternalMovie {
     private String externalId;
     private String name;
     private Integer length;
+    private String link;
     private String releaseYear;
     private String posterLink;
+    private String description;
     @SerializedName("attributeIds")
     private List<String> externalAttributes = new LinkedList<>();
+    private List<ExternalEvent> events = new LinkedList<>();
 
     public ExternalMovie() { }
 
@@ -51,6 +54,14 @@ public class ExternalMovie {
         this.length = length;
     }
 
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
     public String getReleaseYear() {
         return releaseYear;
     }
@@ -75,15 +86,34 @@ public class ExternalMovie {
         this.externalAttributes = externalAttributes;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<ExternalEvent> getEvents() {
+        return events;
+    }
+
+    public void setEvents(List<ExternalEvent> events) {
+        this.events = events;
+    }
+
     @Override
     public String toString() {
         return "ExternalMovie{" +
                 "externalId='" + externalId + '\'' +
                 ", name='" + name + '\'' +
                 ", length=" + length +
+                ", link='" + link + '\'' +
                 ", releaseYear='" + releaseYear + '\'' +
                 ", posterLink='" + posterLink + '\'' +
-                ", externalAttributes.size()=" + externalAttributes.size() +
+                ", description='" + description + '\'' +
+                ", externalAttributes=" + externalAttributes +
+                ", events=" + events +
                 '}';
     }
 }

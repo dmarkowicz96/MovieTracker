@@ -14,7 +14,11 @@ import pk.movietracker.model.Movie;
 public class MovieDAO extends BaseDao {
 
     public void insertMovie(Movie movie) {
-        //databaseHelper.getWritableDatabase().execSQL("INSERT INTO movie (name, last_name) VALUES( '""');");
+
+        String date = new SimpleDateFormat("yyy-MM-dd HH:mm:ss").format(movie.getDate());
+        databaseHelper.getWritableDatabase().execSQL("INSERT INTO movie (favorite, name, description,start_date) VALUES('0', ?, ?, ?)",
+                new String[]{movie.getName(),movie.getDescription(),date});
+
     }
 
     public Movie getMovie(long id) {
@@ -99,7 +103,7 @@ public class MovieDAO extends BaseDao {
                     String description = cursor.getString(cursor.getColumnIndex("description"));
                     String rDate = cursor.getString(cursor.getColumnIndex("start_date"));
 
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     Date d=new Date();
                     try {
                         d=  dateFormat.parse(rDate);
