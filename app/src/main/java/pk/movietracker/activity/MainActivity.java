@@ -1,46 +1,60 @@
 package pk.movietracker.activity;
 
-import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.wifi.WifiManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 
 import java.util.Date;
 import java.util.List;
 
 import pk.movietracker.R;
+import pk.movietracker.Receiver.WifiReceiver;
+import pk.movietracker.db.DatabaseHelper;
+import pk.movietracker.fragment.Menu;
 import pk.movietracker.parser.asynctask.AsyncTaskCallback;
 import pk.movietracker.parser.asynctask.AsyncTaskGetCinemaDates;
-import pk.movietracker.parser.asynctask.AsyncTaskGetCinemaEvents;
 import pk.movietracker.parser.asynctask.AsyncTaskGetCinemaMovies;
 import pk.movietracker.parser.asynctask.AsyncTaskGetCinemas;
 import pk.movietracker.parser.asynctask.paramwrapper.ParamCinemaDate;
 import pk.movietracker.parser.model.ExternalCinema;
-import pk.movietracker.parser.model.ExternalEvent;
 import pk.movietracker.parser.model.ExternalMovie;
 
 public class MainActivity extends AppCompatActivity {
+
+    private DatabaseHelper databaseHelper;
+    WifiReceiver receiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        exampleGetCinemaEvents();
+        initializeFragment();
+
+        databaseHelper = DatabaseHelper.getInstance(getApplicationContext());
+
+        receiver = new WifiReceiver(getBaseContext());
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+        registerReceiver(receiver , intentFilter);
+
+        exampleGetCinemaMovies();
+        exampleGetCinemaDates();
     }
 
-    public void startFavorites(View view) {
-        Intent intent = new Intent(MainActivity.this, Favorites.class);
-        startActivity(intent);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        receiver.stop();
+        unregisterReceiver(receiver);
     }
 
-
-    public void startShowMovies(View view) {
-        Intent intent = new Intent(MainActivity.this, Movies.class);
-        startActivity(intent);
+    private void initializeFragment() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.mainMenuFrame, new Menu())
+                .commit();
     }
-
-
 
     // Pobiera wszystkie kina Cinema City w polsce.
     private void exampleGetCinemas() {
@@ -106,28 +120,5 @@ public class MainActivity extends AppCompatActivity {
         task.execute(krakowPlazaCinema);
     }
 
-    // Pobiera godziny seansow dla danego kina i dla danej daty, w tym przypadku krakow-plaza, dzisiaj
-    // Uwaga! mozna to zlaczyc z exampleGetCinemaMovies, bo to ten sam endpoint.
-    // ExternalEvent mozemy zlaczyc z ExternalMovie przy pomocy pola ExternalEvent::externalMovieId i ExternalMovie::externalId
-    private void exampleGetCinemaEvents() {
 
-        // Mock
-        ExternalCinema krakowPlazaCinema = new ExternalCinema("1063", "Kraków - Galeria Plaza", "al. Pokoju 44, 31-546, Kraków");
-        ParamCinemaDate parameters = new ParamCinemaDate(krakowPlazaCinema, new Date());
-
-        AsyncTaskGetCinemaEvents task = new AsyncTaskGetCinemaEvents(new AsyncTaskCallback<List<ExternalEvent>>() {
-            @Override
-            public void onSuccess(List<ExternalEvent> events) {
-                for (ExternalEvent event : events) {
-                    System.out.println(event.toString());
-                }
-            }
-
-            @Override
-            public void onFailure(String message) {
-                System.out.println("exampleGetCinemaEvents failure");
-            }
-        });
-        task.execute(parameters);
-    }
 }
